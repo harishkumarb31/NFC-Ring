@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  passwordHash String
+  role         String   @default("USER")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  profile         Profile?
+  ring            Ring?
+  connectionsSent Connection[] @relation("ConnectionsSent")
+
+  @@index([email])
+}
+
+model Profile {
+  id           String      @id @default(cuid())
+  userId       String      @unique
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name         String
+  company      String?
+  designation  String?
+  bio          String?
+  shortBio     String?
+  phone        String?
+  email        String?
+  website      String?
+  linkedin     String?
+  whatsapp     String?
+  portfolioUrl String?
+  photoUrl     String?
+  services     String?
+  mode         String      @default("BUSINESS")
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+
+  leads           Lead[]
+  analyticsEvents AnalyticsEvent[]
+
+  @@index([userId])
+}
+
+model Ring {
+  id        String     @id @default(cuid())
+  userId    String     @unique
+  user      User       @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String     @unique
+  status    String     @default("ACTIVE")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([token])
+}
+
+model Connection {
+  id        String   @id @default(cuid())
+  userAId   String
+  userA     User     @relation("ConnectionsSent", fields: [userAId], references: [id], onDelete: Cascade)
+  name      String
+  email     String
+  company   String?
+  message   String?
+  createdAt DateTime @default(now())
+
+  @@unique([userAId, email])
+  @@index([userAId])
+}
+
+model Lead {
+  id        String     @id @default(cuid())
+  profileId String
+  profile   Profile    @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  name      String
+  email     String
+  phone     String?
+  company   String?
+  message   String?
+  status    String     @default("NEW")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([profileId])
+  @@index([status])
+  @@index([profileId, createdAt])
+  @@index([profileId, status])
+}
+
+model AnalyticsEvent {
+  id        String      @id @default(cuid())
+  profileId String
+  profile   Profile     @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  eventType String
+  source    String      @default("DIRECT")
+  metadata  String?
+  createdAt DateTime    @default(now())
+
+  @@index([profileId])
+  @@index([eventType])
+  @@index([createdAt])
+  @@index([profileId, createdAt])
+  @@index([profileId, eventType])
+}

@@ -1,0 +1,105 @@
+@import "tailwindcss";
+
+:root {
+  /* Surfaces — graphite depth scale */
+  --surface-0: #0a0a0b;   /* app background */
+  --surface-1: #121214;   /* raised panel */
+  --surface-2: #18181b;   /* card */
+  --surface-3: #202023;   /* hover / active */
+  --border-hair: rgba(255, 255, 255, 0.08);
+  --border-hair-strong: rgba(255, 255, 255, 0.14);
+
+  /* Text */
+  --text-primary: #f2f1ed;
+  --text-muted: #9a9a9f;
+  --text-faint: #6c6c72;
+
+  /* Signature accent — champagne gold, evokes the ring itself. Used sparingly. */
+  --accent: #c9a670;
+  --accent-soft: #c9a67022;
+  --accent-strong: #e0c08c;
+
+  /* Status */
+  --status-live: #6fbf8f;
+  --status-off: #6c6c72;
+  --status-warn: #cf8a4a;
+
+  --background: var(--surface-0);
+  --foreground: var(--text-primary);
+}
+
+@theme inline {
+  --color-surface-0: var(--surface-0);
+  --color-surface-1: var(--surface-1);
+  --color-surface-2: var(--surface-2);
+  --color-surface-3: var(--surface-3);
+  --color-border-hair: var(--border-hair);
+  --color-text-primary: var(--text-primary);
+  --color-text-muted: var(--text-muted);
+  --color-text-faint: var(--text-faint);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-accent-strong: var(--accent-strong);
+  --color-status-live: var(--status-live);
+  --color-status-off: var(--status-off);
+  --color-status-warn: var(--status-warn);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-display: var(--font-fraunces);
+  --font-sans: var(--font-inter);
+  --font-mono: var(--font-jetbrains);
+}
+
+* {
+  border-color: var(--border-hair);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans), ui-sans-serif, system-ui, sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Signature: the rotating ring mark used across loading/hero/brand moments */
+@keyframes ring-spin {
+  to { transform: rotate(360deg); }
+}
+.ring-mark {
+  border-radius: 9999px;
+  border: 1.5px solid transparent;
+  border-top-color: var(--accent);
+  border-right-color: var(--accent-soft);
+  animation: ring-spin 1.4s linear infinite;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--text-primary);
+}
+
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--surface-0); }
+::-webkit-scrollbar-thumb { background: var(--surface-3); border-radius: 8px; }
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+select option {
+  background-color: var(--surface-1);
+  color: var(--text-primary);
+}
