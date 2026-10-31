@@ -3,8 +3,15 @@ import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/db";
 
-const JWT_SECRET = process.env.JWT_SECRET as string;
 const COOKIE_NAME = "nfc_ring_session";
+
+function getJwtSecret(): string {
+  const secret = process.env.JWT_SECRET;
+  if (!secret) {
+    throw new Error("JWT_SECRET is not configured");
+  }
+  return secret;
+}
 
 export interface SessionPayload {
   userId: string;
@@ -20,14 +27,14 @@ export async function verifyPassword(password: string, hash: string) {
 }
 
 export function signSession(payload: SessionPayload) {
-  if (!JWT_SECRET) throw new Error("JWT_SECRET is not configured");
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "30d" });
+  const secret = getJwtSecret();
+  return jwt.sign(payload, secret, { expiresIn: "30d" });
 }
 
 export function verifySession(token: string): SessionPayload | null {
   try {
-    if (!JWT_SECRET) return null;
-    return jwt.verify(token, JWT_SECRET) as SessionPayload;
+    const secret = getJwtSecret();
+    return jwt.verify(token, secret) as SessionPayload;
   } catch {
     return null;
   }

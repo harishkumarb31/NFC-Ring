@@ -6,10 +6,16 @@ import { jsonOk, jsonError, handleApiError } from "@/lib/utils/api";
 
 export async function POST(req: NextRequest) {
   try {
-    const body = await req.json();
+    let body;
+    try {
+      body = await req.json();
+    } catch {
+      return jsonError("Invalid JSON request body", 400);
+    }
+
     const parsed = loginSchema.safeParse(body);
     if (!parsed.success) {
-      return jsonError(parsed.error.issues[0]?.message || "Invalid input", 422);
+      return jsonError(parsed.error.issues[0]?.message || "Invalid input", 400);
     }
     const { email, password } = parsed.data;
 
